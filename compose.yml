@@ -1,4 +1,4 @@
-service:
+services:
   database:
     image: postgres:17
     ports:
