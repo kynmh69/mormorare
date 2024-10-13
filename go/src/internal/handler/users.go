@@ -15,6 +15,10 @@ type User struct {
 	BirthDay time.Time `binding:"required" time_format:"2006-01-02" example:"2006-01-02"`
 }
 
+type DeleteUser struct {
+	UserName string `binding:"required" example:"test1"`
+}
+
 type UserResponse struct {
 	UserName string    `json:"user_name" example:"test1"`
 	Email    string    `json:"email" example:"example@test.com"`
@@ -79,7 +83,7 @@ func (u *UserHandler) Retrieve(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
-	var resp []UserResponse
+	resp := make([]UserResponse, 0, len(users))
 	for _, user := range users {
 		resp = append(resp, UserResponse{
 			UserName: user.UserName,
@@ -87,10 +91,23 @@ func (u *UserHandler) Retrieve(ctx *gin.Context) {
 			BirthDay: user.Birthday,
 		})
 	}
+	if len(resp) == 0 {
+		ctx.Status(http.StatusNotFound)
+		return
+	}
 	ctx.JSON(http.StatusOK, resp)
 }
 
 func (u *UserHandler) Delete(ctx *gin.Context) {
 	// Delete user
-	ctx.Status(http.StatusNotImplemented)
+	var deleteUser DeleteUser
+	if err := ctx.ShouldBindUri(&deleteUser); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
+	if err := u.db.Where("user_name = ?", deleteUser.UserName).Delete(&domain.User{}).Error; err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }
