@@ -5,6 +5,6 @@ COPY ./go/src .
 
 # install module
 RUN go mod download \
-    && go install github.com/air-verse/air@latest \
+    && go install github.com/air-verse/air@latest
 
 CMD ["air", "-c", ".air.toml"]

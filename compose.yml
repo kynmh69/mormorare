@@ -4,24 +4,24 @@ services:
     ports:
       - "5432:5432"
     environment:
-        POSTGRES_USER: user
-        POSTGRES_PASSWORD: password
-        POSTGRES_DB: app
-        TZ: Asia/Tokyo
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+      TZ: Asia/Tokyo
     networks:
       - app-network
     volumes:
-        - database-data:/var/lib/postgresql/data
-    restart: failure
+      - database-data:/var/lib/postgresql/data
+    restart: on-failure
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user"]
+      test: [ "CMD-SHELL", "pg_isready -U user" ]
       interval: 10s
       timeout: 5s
       retries: 5
   users:
-    image:
+    build:
       context: .
-      dockerfile: docker/users/Dockerfile
+      dockerfile: ./docker/users/Dockerfile
     ports:
       - "8080:8080"
     volumes:
@@ -31,6 +31,6 @@ services:
 networks:
   app-network:
     driver: bridge
-volume:
+volumes:
   database-data:
     driver: local
