@@ -11,6 +11,7 @@ type Engine struct {
 	Engine *gin.Engine
 	DB     *gorm.DB
 	User   *handler.UserHandler
+	api    *gin.RouterGroup
 }
 
 func NewEngine(db *gorm.DB) *Engine {
@@ -27,6 +28,7 @@ func (e *Engine) Run() {
 }
 
 func (e *Engine) Route() {
+	e.api = e.Engine.Group("/api")
 	e.createUserHandler()
 	e.routeUser()
 }
@@ -37,8 +39,8 @@ func (e *Engine) createUserHandler() {
 }
 
 func (e *Engine) routeUser() {
-	e.Engine.GET("/users", e.User.Retrieve)
-	e.Engine.POST("/users", e.User.Create)
-	e.Engine.PUT("/users", e.User.Update)
-	e.Engine.DELETE("/users", e.User.Delete)
+	e.api.GET("/users", e.User.Retrieve)
+	e.api.POST("/users", e.User.Create)
+	e.api.PUT("/users", e.User.Update)
+	e.api.DELETE("/users", e.User.Delete)
 }
