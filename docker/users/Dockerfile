@@ -1,7 +1,7 @@
 FROM golang:1.23
 
 WORKDIR /go/src/app
-COPY . .
+COPY ./go/src .
 
 # install module
 RUN go mod download \

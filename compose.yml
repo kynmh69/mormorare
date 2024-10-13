@@ -7,6 +7,7 @@ service:
         POSTGRES_USER: user
         POSTGRES_PASSWORD: password
         POSTGRES_DB: app
+        TZ: Asia/Tokyo
     networks:
       - app-network
     volumes:
@@ -25,6 +26,8 @@ service:
       - "8080:8080"
     volumes:
       - ./go/src:/go/src/app
+    env_file:
+      - ./docker/users/.env
 networks:
   app-network:
     driver: bridge
