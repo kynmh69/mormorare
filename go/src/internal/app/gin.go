@@ -41,6 +41,6 @@ func (e *Engine) createUserHandler() {
 func (e *Engine) routeUser() {
 	e.api.GET("/users", e.User.Retrieve)
 	e.api.POST("/users", e.User.Create)
-	e.api.PUT("/users", e.User.Update)
-	e.api.DELETE("/users", e.User.Delete)
+	e.api.PUT("/users/:id", e.User.Update)
+	e.api.DELETE("/users/:username", e.User.Delete)
 }

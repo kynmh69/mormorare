@@ -43,7 +43,34 @@ paths:
       tags:
       - users
     post:
+      consumes:
+      - application/json
       description: Create a new user
+      parameters:
+      - description: set username
+        in: body
+        name: user_name
+        required: true
+        schema:
+          type: string
+      - description: set password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: set email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: set birthday
+        in: body
+        name: birthday
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -56,6 +83,25 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorJson'
       summary: Create a new user
+      tags:
+      - users
+  /api/v1/users/{user_name}:
+    delete:
+      description: Delete a user
+      parameters:
+      - description: set username
+        in: path
+        name: user_name
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorJson'
+      summary: Delete a user
       tags:
       - users
 swagger: "2.0"
