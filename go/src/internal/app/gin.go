@@ -28,7 +28,7 @@ func (e *Engine) Run() {
 }
 
 func (e *Engine) Route() {
-	e.api = e.Engine.Group("/api")
+	e.api = e.Engine.Group("/api/v1")
 	e.createUserHandler()
 	e.routeUser()
 }

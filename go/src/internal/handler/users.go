@@ -36,7 +36,7 @@ func NewUserHandler(db *gorm.DB) *UserHandler {
 // @Produce json
 // @Success 201 {object} UserResponse
 // @Failure 400 {object} domain.ErrorJson
-// @Router /users [post]
+// @Router /api/v1/users [post]
 func (u *UserHandler) Create(ctx *gin.Context) {
 	// Create user
 	var newUser User
@@ -71,7 +71,7 @@ func (u *UserHandler) Update(ctx *gin.Context) {
 // @Produce json
 // @Success 200 {array} []UserResponse
 // @Failure 400 {object} domain.ErrorJson
-// @Router /users [get]
+// @Router /api/v1/users [get]
 func (u *UserHandler) Retrieve(ctx *gin.Context) {
 	// Retrieve user
 	var users []domain.User
