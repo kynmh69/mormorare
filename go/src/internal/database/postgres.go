@@ -11,7 +11,7 @@ import (
 
 var db *gorm.DB
 
-func NewPostgres() {
+func NewPostgres() *gorm.DB {
 	var err error
 	logger := logging.GetLogger()
 	// Connect to Postgres
@@ -21,6 +21,7 @@ func NewPostgres() {
 	if err != nil {
 		logger.Panic(err)
 	}
+	return db
 }
 
 func getHost() string {
@@ -48,6 +49,11 @@ func getDB() string {
 	return env.FindEnv(consts.PostgresDB)
 }
 
+func getTimeZone() string {
+	// Get the timezone from the environment
+	return env.FindEnv(consts.TimeZone)
+}
+
 func getConfig() *configs.PsqlConfig {
 	return &configs.PsqlConfig{
 		Host:     getHost(),
@@ -55,5 +61,6 @@ func getConfig() *configs.PsqlConfig {
 		User:     getUser(),
 		Password: getPass(),
 		Dbname:   getDB(),
+		TimeZone: getTimeZone(),
 	}
 }
