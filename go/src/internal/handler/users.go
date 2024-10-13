@@ -9,10 +9,16 @@ import (
 )
 
 type User struct {
-	UserName string    `binding:"required"`
-	Password string    `binding:"required"`
-	Email    string    `binding:"required"`
-	BirthDay time.Time `binding:"required" time_format:"2006-01-02"`
+	UserName string    `binding:"required" example:"test1"`
+	Password string    `binding:"required" example:"password"`
+	Email    string    `binding:"required" example:"example@test.com"`
+	BirthDay time.Time `binding:"required" time_format:"2006-01-02" example:"2006-01-02"`
+}
+
+type UserResponse struct {
+	UserName string    `json:"user_name" example:"test1"`
+	Email    string    `json:"email" example:"example@test.com"`
+	BirthDay time.Time `json:"birth_day" example:"2006-01-02"`
 }
 
 type UserHandler struct {
@@ -23,6 +29,14 @@ func NewUserHandler(db *gorm.DB) *UserHandler {
 	return &UserHandler{db: db}
 }
 
+// Create
+// @Summary Create a new user
+// @Description Create a new user
+// @Tags users
+// @Produce json
+// @Success 201 {object} UserResponse
+// @Failure 400 {object} domain.ErrorJson
+// @Router /users [post]
 func (u *UserHandler) Create(ctx *gin.Context) {
 	// Create user
 	var newUser User
@@ -37,7 +51,12 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 		newUser.BirthDay,
 	)
 	u.db.Create(dUser)
-	ctx.JSON(http.StatusCreated, dUser)
+	resp := UserResponse{
+		UserName: dUser.UserName,
+		Email:    dUser.Email,
+		BirthDay: dUser.Birthday,
+	}
+	ctx.JSON(http.StatusCreated, resp)
 }
 
 func (u *UserHandler) Update(ctx *gin.Context) {
@@ -45,6 +64,14 @@ func (u *UserHandler) Update(ctx *gin.Context) {
 	ctx.Status(http.StatusNotImplemented)
 }
 
+// Retrieve
+// @Summary Retrieve all users
+// @Description Retrieve all users
+// @Tags users
+// @Produce json
+// @Success 200 {array} []UserResponse
+// @Failure 400 {object} domain.ErrorJson
+// @Router /users [get]
 func (u *UserHandler) Retrieve(ctx *gin.Context) {
 	// Retrieve user
 	var users []domain.User
@@ -52,7 +79,15 @@ func (u *UserHandler) Retrieve(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
-	ctx.JSON(http.StatusOK, users)
+	var resp []UserResponse
+	for _, user := range users {
+		resp = append(resp, UserResponse{
+			UserName: user.UserName,
+			Email:    user.Email,
+			BirthDay: user.Birthday,
+		})
+	}
+	ctx.JSON(http.StatusOK, resp)
 }
 
 func (u *UserHandler) Delete(ctx *gin.Context) {

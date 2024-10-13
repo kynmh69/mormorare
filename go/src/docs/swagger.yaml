@@ -1,4 +1,61 @@
+definitions:
+  domain.ErrorJson:
+    properties:
+      error:
+        type: string
+    type: object
+  handler.UserResponse:
+    properties:
+      birth_day:
+        example: "2006-01-02"
+        type: string
+      email:
+        example: example@test.com
+        type: string
+      user_name:
+        example: test1
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+  title: Mormorare API
+  version: "1.0"
+paths:
+  /users:
+    get:
+      description: Retrieve all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/handler.UserResponse'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorJson'
+      summary: Retrieve all users
+      tags:
+      - users
+    post:
+      description: Create a new user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorJson'
+      summary: Create a new user
+      tags:
+      - users
 swagger: "2.0"
