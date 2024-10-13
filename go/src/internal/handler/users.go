@@ -10,20 +10,20 @@ import (
 )
 
 type User struct {
-	UserName string    `form:"username" binding:"required"`
-	Password string    `form:"password" binding:"required"`
-	Email    string    `form:"email" binding:"required"`
-	BirthDay time.Time `form:"birthday" time_format:"2006-01-02" time_utc:"0" binding:"required"`
+	UserName string    `json:"username" binding:"required"`
+	Password string    `json:"password" binding:"required"`
+	Email    string    `json:"email" binding:"required,email"`
+	BirthDay time.Time `json:"birthday" time_format:"2006-01-02" time_utc:"1" binding:"required"`
 }
 
 type DeleteUser struct {
-	UserName string `uri:"username" binding:"required" example:"test1"`
+	UserName string `uri:"username" binding:"required"`
 }
 
 type UserResponse struct {
 	UserName string    `json:"username" example:"test1"`
 	Email    string    `json:"email" example:"example@test.com"`
-	BirthDay time.Time `json:"birth_day" example:"2006-01-02"`
+	BirthDay time.Time `json:"birthday" example:"2006-01-02"`
 }
 
 type UserHandler struct {
@@ -40,7 +40,7 @@ func NewUserHandler(db *gorm.DB) *UserHandler {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user_name body string true "set username"
+// @Param username body string true "set username"
 // @Param password body string true "set password"
 // @Param email body string true "set email"
 // @Param birthday body string true "set birthday"
