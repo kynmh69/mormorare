@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/kynmh69/mormorare/internal/domain"
+	"github.com/kynmh69/mormorare/pkg/hash"
 	originTime "github.com/kynmh69/mormorare/pkg/time"
 	"gorm.io/gorm"
 	"net/http"
@@ -57,9 +58,15 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
+
+	hashedPassword, err := hash.HashPassword(newUser.Password)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
 	dUser := domain.NewUser(
 		newUser.UserName,
-		newUser.Password,
+		hashedPassword,
 		newUser.Email,
 		time.Time(newUser.BirthDay),
 	)
