@@ -1,19 +1,22 @@
 package handler
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/kynmh69/mormorare/internal/domain"
-	"github.com/kynmh69/mormorare/pkg/logging"
+	originTime "github.com/kynmh69/mormorare/pkg/time"
 	"gorm.io/gorm"
 	"net/http"
 	"time"
 )
 
+var _ json.Unmarshaler = &originTime.DateTime{}
+
 type User struct {
-	UserName string    `json:"username" binding:"required"`
-	Password string    `json:"password" binding:"required"`
-	Email    string    `json:"email" binding:"required,email"`
-	BirthDay time.Time `json:"birthday" time_format:"2006-01-02" time_utc:"1" binding:"required"`
+	UserName string              `json:"username" binding:"required"`
+	Password string              `json:"password" binding:"required"`
+	Email    string              `json:"email" binding:"required,email"`
+	BirthDay originTime.DateTime `json:"birthday" binding:"required"`
 }
 
 type DeleteUser struct {
@@ -48,11 +51,9 @@ func NewUserHandler(db *gorm.DB) *UserHandler {
 // @Failure 400 {object} domain.ErrorJson
 // @Router /api/v1/users [post]
 func (u *UserHandler) Create(ctx *gin.Context) {
-	logger := logging.GetLogger()
 	// Create user
 	var newUser User
 	if err := ctx.ShouldBindJSON(&newUser); err != nil {
-		logger.Error(err)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
@@ -60,9 +61,12 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 		newUser.UserName,
 		newUser.Password,
 		newUser.Email,
-		newUser.BirthDay,
+		time.Time(newUser.BirthDay),
 	)
-	u.db.Create(dUser)
+	if err := u.db.Create(dUser).Error; err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
 	resp := UserResponse{
 		UserName: dUser.UserName,
 		Email:    dUser.Email,
@@ -118,6 +122,10 @@ func (u *UserHandler) Delete(ctx *gin.Context) {
 	// Delete user
 	var deleteUser DeleteUser
 	if err := ctx.ShouldBindUri(&deleteUser); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
+	if err := u.db.Where("user_name = ?", deleteUser.UserName).First(&domain.User{}).Error; err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
