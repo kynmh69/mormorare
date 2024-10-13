@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/kynmh69/mormorare/configs"
 	"github.com/kynmh69/mormorare/consts"
 	"github.com/kynmh69/mormorare/pkg/env"
@@ -22,7 +23,18 @@ func NewPostgres() *gorm.DB {
 	if err != nil {
 		logger.Panic(err)
 	}
-	return db
+	return GetDB()
+}
+
+func GetDB() *gorm.DB {
+	switch gin.Mode() {
+	case gin.DebugMode:
+		return db.Debug()
+	case gin.TestMode, gin.ReleaseMode:
+		return db
+	default:
+		return db
+	}
 }
 
 func getHost() string {
