@@ -2,7 +2,6 @@ package time
 
 import (
 	"encoding/json"
-	"github.com/kynmh69/mormorare/consts"
 	"time"
 )
 
@@ -13,7 +12,7 @@ func (t *DateTime) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &s); err != nil {
 		return err
 	}
-	pt, err := time.ParseInLocation(consts.DateFormat, s, time.Local)
+	pt, err := time.ParseInLocation(time.DateOnly, s, time.Local)
 	if err != nil {
 		return err
 	}

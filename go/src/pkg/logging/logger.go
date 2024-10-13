@@ -5,25 +5,25 @@ import (
 	"go.uber.org/zap"
 )
 
-var logger *zap.SugaredLogger
+var (
+	logger    *zap.SugaredLogger
+	zapLogger *zap.Logger
+)
 
 func Initialize() {
 	if logger != nil {
 		return
 	}
 	ginMode := gin.Mode()
-	var (
-		l *zap.Logger
-	)
 	switch ginMode {
 	case gin.DebugMode:
-		l, _ = zap.NewDevelopment()
+		zapLogger, _ = zap.NewDevelopment()
 	case gin.TestMode, gin.ReleaseMode:
-		l, _ = zap.NewProduction()
+		zapLogger, _ = zap.NewProduction()
 	default:
-		l, _ = zap.NewDevelopment()
+		zapLogger, _ = zap.NewDevelopment()
 	}
-	logger = l.Sugar()
+	logger = zapLogger.Sugar()
 }
 
 func GetLogger() *zap.SugaredLogger {
@@ -31,4 +31,11 @@ func GetLogger() *zap.SugaredLogger {
 		Initialize()
 	}
 	return logger
+}
+
+func GetZapLogger() *zap.Logger {
+	if zapLogger == nil {
+		Initialize()
+	}
+	return zapLogger
 }
