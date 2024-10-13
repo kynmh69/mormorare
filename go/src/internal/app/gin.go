@@ -3,7 +3,6 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kynmh69/mormorare/internal/handler"
-	"github.com/kynmh69/mormorare/internal/route"
 	"github.com/kynmh69/mormorare/pkg/logging"
 	"gorm.io/gorm"
 )
@@ -29,10 +28,17 @@ func (e *Engine) Run() {
 
 func (e *Engine) Route() {
 	e.createUserHandler()
-	route.User(e)
+	e.routeUser()
 }
 
 // createUserHandler Create User Handler
 func (e *Engine) createUserHandler() {
 	e.User = handler.NewUserHandler(e.DB)
+}
+
+func (e *Engine) routeUser() {
+	e.Engine.GET("/users", e.User.Retrieve)
+	e.Engine.POST("/users", e.User.Create)
+	e.Engine.PUT("/users", e.User.Update)
+	e.Engine.DELETE("/users", e.User.Delete)
 }
