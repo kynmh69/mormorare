@@ -17,6 +17,7 @@ func NewPostgres() *gorm.DB {
 	// Connect to Postgres
 	config := getConfig()
 	// Connect to Postgres
+	logger.Debug(config)
 	db, err = gorm.Open(postgres.Open(config.FormatDsn()), &gorm.Config{})
 	if err != nil {
 		logger.Panic(err)

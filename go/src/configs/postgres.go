@@ -10,7 +10,7 @@ type PsqlConfig struct {
 }
 
 func (p *PsqlConfig) FormatDsn() string {
-	return "host=" + p.Host + " port=" + p.Port + " user=" + p.User + " password=" + p.Password + " dbname=" + p.Dbname + " sslmode=disable TimeZone=" + p.TimeZone
+	return "host=" + p.Host + " port=" + p.Port + " user=" + p.User + " password=" + p.Password + " dbname=" + p.Dbname + " sslmode=disable timezone=" + p.TimeZone
 }
 
 func (p *PsqlConfig) String() string {

@@ -28,6 +28,8 @@ services:
       - ./go/src:/go/src/app
     env_file:
       - ./docker/users/.env
+    networks:
+        - app-network
 networks:
   app-network:
     driver: bridge
