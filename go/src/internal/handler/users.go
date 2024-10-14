@@ -3,8 +3,8 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kynmh69/mormorare/internal/domain"
+	"github.com/kynmh69/mormorare/internal/domain/repository"
 	"github.com/kynmh69/mormorare/pkg/hash"
-	"gorm.io/gorm"
 	"net/http"
 	"time"
 )
@@ -37,11 +37,11 @@ type UserResponse struct {
 }
 
 type UserHandler struct {
-	db *gorm.DB
+	repo repository.UserRepository
 }
 
-func NewUserHandler(db *gorm.DB) *UserHandler {
-	return &UserHandler{db: db}
+func NewUserHandler(repo repository.UserRepository) *UserHandler {
+	return &UserHandler{repo: repo}
 }
 
 // Create
@@ -74,9 +74,9 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 		newUser.UserName,
 		hashedPassword,
 		newUser.Email,
-		time.Time(newUser.BirthDay),
+		newUser.BirthDay,
 	)
-	if err := u.db.Create(dUser).Error; err != nil {
+	if err := u.repo.CreateUser(dUser); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
@@ -103,18 +103,20 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 func (u *UserHandler) Update(ctx *gin.Context) {
 	var (
 		updateUser UserUpdate
-		dUser      domain.User
+		dUser      *domain.User
 		uriUser    UserId
+		err        error
 	)
-	if err := ctx.ShouldBindUri(&uriUser); err != nil {
+	if err = ctx.ShouldBindUri(&uriUser); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
-	if err := ctx.ShouldBind(&updateUser); err != nil {
+	if err = ctx.ShouldBind(&updateUser); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
-	if err := u.db.Where("user_name = ?", uriUser.Username).Take(&dUser).Error; err != nil {
+	dUser, err = u.repo.GetUserByUsername(uriUser.Username)
+	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
@@ -132,7 +134,7 @@ func (u *UserHandler) Update(ctx *gin.Context) {
 	if updateUser.UserName != "" {
 		dUser.UserName = updateUser.UserName
 	}
-	if err := u.db.Save(&dUser).Error; err != nil {
+	if err := u.repo.UpdateUser(dUser); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
@@ -155,8 +157,12 @@ func (u *UserHandler) Update(ctx *gin.Context) {
 // @Router /api/v1/users [get]
 func (u *UserHandler) Retrieve(ctx *gin.Context) {
 	// Retrieve user
-	var users []domain.User
-	if err := u.db.Find(&users).Error; err != nil {
+	var (
+		users []domain.User
+		err   error
+	)
+	users, err = u.repo.GetUsers()
+	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
@@ -190,11 +196,12 @@ func (u *UserHandler) Delete(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
-	if err := u.db.Where("user_name = ?", deleteUser.UserName).First(&domain.User{}).Error; err != nil {
+	user, err := u.repo.GetUserByUsername(deleteUser.UserName)
+	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
-	if err := u.db.Where("user_name = ?", deleteUser.UserName).Delete(&domain.User{}).Error; err != nil {
+	if err := u.repo.DeleteUser(user); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
