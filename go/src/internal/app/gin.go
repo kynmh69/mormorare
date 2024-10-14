@@ -1,4 +1,3 @@
-// +wireinject
 package app
 
 import (
@@ -7,21 +6,28 @@ import (
 	"github.com/kynmh69/mormorare/internal/domain/repository"
 	"github.com/kynmh69/mormorare/internal/handler"
 	"github.com/kynmh69/mormorare/pkg/logging"
+	"gorm.io/gorm"
 	"time"
 )
 
 type Engine struct {
 	Engine *gin.Engine
-	Repo   repository.UserRepository
+	Db     *gorm.DB
+	Repo   *repository.UserRepository
 	User   *handler.UserHandler
 	api    *gin.RouterGroup
 }
 
-func NewEngine(repo repository.UserRepository) *Engine {
+func NewEngine(db *gorm.DB, repo *repository.UserRepository, userHandler *handler.UserHandler) *Engine {
 	engine := gin.Default()
 	engine.Use(ginZap.Ginzap(logging.GetZapLogger(), time.RFC3339, true))
 	engine.Use(ginZap.RecoveryWithZap(logging.GetZapLogger(), true))
-	return &Engine{Engine: engine, Repo: repo}
+	return &Engine{
+		Engine: engine,
+		Db:     db,
+		Repo:   repo,
+		User:   userHandler,
+	}
 }
 
 func (e *Engine) Run() {
@@ -34,13 +40,7 @@ func (e *Engine) Run() {
 
 func (e *Engine) Route() {
 	e.api = e.Engine.Group("/api/v1")
-	e.createUserHandler()
 	e.routeUser()
-}
-
-// createUserHandler Create User Handler
-func (e *Engine) createUserHandler() {
-	e.User = handler.NewUserHandler(e.Repo)
 }
 
 func (e *Engine) routeUser() {
