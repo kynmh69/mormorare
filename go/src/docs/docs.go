@@ -46,67 +46,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "Update a user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Update a user",
-                "parameters": [
-                    {
-                        "description": "set username",
-                        "name": "username",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "set password",
-                        "name": "password",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "set email",
-                        "name": "email",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "set birthday",
-                        "name": "birthday",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/handler.UserResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/domain.ErrorJson"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Create a new user",
                 "consumes": [
@@ -173,7 +112,62 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/{user_name}": {
+        "/api/v1/users/username": {
+            "put": {
+                "description": "Update a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "description": "set username",
+                        "name": "username",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "set password",
+                        "name": "password",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "set email",
+                        "name": "email",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorJson"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{username}": {
             "delete": {
                 "description": "Delete a user",
                 "tags": [

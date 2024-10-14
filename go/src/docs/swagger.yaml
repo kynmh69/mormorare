@@ -85,6 +85,26 @@ paths:
       summary: Create a new user
       tags:
       - users
+  /api/v1/users/{username}:
+    delete:
+      description: Delete a user
+      parameters:
+      - description: set username
+        in: path
+        name: user_name
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorJson'
+      summary: Delete a user
+      tags:
+      - users
+  /api/v1/users/username:
     put:
       consumes:
       - application/json
@@ -105,11 +125,6 @@ paths:
         name: email
         schema:
           type: string
-      - description: set birthday
-        in: body
-        name: birthday
-        schema:
-          type: string
       produces:
       - application/json
       responses:
@@ -122,25 +137,6 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorJson'
       summary: Update a user
-      tags:
-      - users
-  /api/v1/users/{user_name}:
-    delete:
-      description: Delete a user
-      parameters:
-      - description: set username
-        in: path
-        name: user_name
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorJson'
-      summary: Delete a user
       tags:
       - users
 swagger: "2.0"

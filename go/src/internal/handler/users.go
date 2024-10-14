@@ -99,7 +99,7 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 // @Param email body string false "set email"
 // @Success 201 {object} UserResponse
 // @Failure 400 {object} domain.ErrorJson
-// @Router /api/v1/users [put]
+// @Router /api/v1/users/username [put]
 func (u *UserHandler) Update(ctx *gin.Context) {
 	var (
 		updateUser UserUpdate
@@ -188,7 +188,7 @@ func (u *UserHandler) Retrieve(ctx *gin.Context) {
 // @Param user_name path string true "set username"
 // @Success 204
 // @Failure 400 {object} domain.ErrorJson
-// @Router /api/v1/users/{user_name} [delete]
+// @Router /api/v1/users/{username} [delete]
 func (u *UserHandler) Delete(ctx *gin.Context) {
 	// Delete user
 	var deleteUser DeleteUser
