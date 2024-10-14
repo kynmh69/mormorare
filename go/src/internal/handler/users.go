@@ -5,15 +5,16 @@ import (
 	"github.com/kynmh69/mormorare/internal/domain"
 	"github.com/kynmh69/mormorare/internal/domain/repository"
 	"github.com/kynmh69/mormorare/pkg/hash"
+	originalTime "github.com/kynmh69/mormorare/pkg/time"
 	"net/http"
 	"time"
 )
 
 type User struct {
-	UserName string    `form:"username" binding:"required"`
-	Password string    `form:"password" binding:"required,min=8,max=32"`
-	Email    string    `form:"email" binding:"required,email"`
-	BirthDay time.Time `form:"birthday" binding:"required" time_format:"2006-01-02"`
+	UserName string                `json:"username" binding:"required"`
+	Password string                `json:"password" binding:"required,min=8,max=32"`
+	Email    string                `json:"email" binding:"required,email"`
+	BirthDay originalTime.DateTime `json:"birthday" binding:"required"`
 }
 
 type UserId struct {
@@ -74,7 +75,7 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 		newUser.UserName,
 		hashedPassword,
 		newUser.Email,
-		newUser.BirthDay,
+		time.Time(newUser.BirthDay),
 	)
 	if err := u.repo.CreateUser(dUser); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
