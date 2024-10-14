@@ -21,9 +21,9 @@ type UserId struct {
 }
 
 type UserUpdate struct {
-	UserName string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
+	UserName string `from:"username"`
+	Password string `form:"password"`
+	Email    string `form:"email"`
 }
 
 type DeleteUser struct {
