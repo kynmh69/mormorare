@@ -1,30 +1,29 @@
 package handler
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/kynmh69/mormorare/internal/domain"
 	"github.com/kynmh69/mormorare/pkg/hash"
-	originTime "github.com/kynmh69/mormorare/pkg/time"
 	"gorm.io/gorm"
 	"net/http"
 	"time"
 )
 
-var _ json.Unmarshaler = &originTime.DateTime{}
-
 type User struct {
-	UserName string              `json:"username" binding:"required"`
-	Password string              `json:"password" binding:"required,min=8,max=32"`
-	Email    string              `json:"email" binding:"required,email"`
-	BirthDay originTime.DateTime `json:"birthday" binding:"required"`
+	UserName string    `form:"username" binding:"required"`
+	Password string    `form:"password" binding:"required,min=8,max=32"`
+	Email    string    `form:"email" binding:"required,email"`
+	BirthDay time.Time `form:"birthday" binding:"required" time_format:"2006-01-02"`
+}
+
+type UserId struct {
+	Username string `uri:"id" binding:"required"`
 }
 
 type UserUpdate struct {
-	UserName string              `json:"username"`
-	Password string              `json:"password"`
-	Email    string              `json:"email"`
-	BirthDay originTime.DateTime `json:"birthday"`
+	UserName string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 type DeleteUser struct {
@@ -98,11 +97,45 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 // @Param username body string false "set username"
 // @Param password body string false "set password"
 // @Param email body string false "set email"
-// @Param birthday body string false "set birthday"
 // @Success 201 {object} UserResponse
 // @Failure 400 {object} domain.ErrorJson
 // @Router /api/v1/users [put]
 func (u *UserHandler) Update(ctx *gin.Context) {
+	var (
+		updateUser UserUpdate
+		dUser      domain.User
+		uriUser    UserId
+	)
+	if err := ctx.ShouldBindUri(&uriUser); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
+	if err := ctx.ShouldBind(&updateUser); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
+	if err := u.db.Where("user_name = ?", updateUser.UserName).Take(&dUser).Error; err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
+	if updateUser.Password != "" {
+		hashedPassword, err := hash.HashPassword(updateUser.Password)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+			return
+		}
+		dUser.Password = hashedPassword
+	}
+	if updateUser.Email != "" {
+		dUser.Email = updateUser.Email
+	}
+	if updateUser.UserName != "" {
+		dUser.UserName = updateUser.UserName
+	}
+	if err := u.db.Save(&dUser).Error; err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
+		return
+	}
 	// Update user
 	ctx.Status(http.StatusNotImplemented)
 }
