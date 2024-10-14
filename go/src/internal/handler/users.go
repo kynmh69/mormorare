@@ -99,7 +99,7 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 // @Param email body string false "set email"
 // @Success 201 {object} UserResponse
 // @Failure 400 {object} domain.ErrorJson
-// @Router /api/v1/users/username [put]
+// @Router /api/v1/users/{username} [put]
 func (u *UserHandler) Update(ctx *gin.Context) {
 	var (
 		updateUser UserUpdate

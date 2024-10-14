@@ -112,7 +112,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/username": {
+        "/api/v1/users/{username}": {
             "put": {
                 "description": "Update a user",
                 "consumes": [
@@ -165,9 +165,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/users/{username}": {
+            },
             "delete": {
                 "description": "Delete a user",
                 "tags": [

@@ -104,7 +104,6 @@ paths:
       summary: Delete a user
       tags:
       - users
-  /api/v1/users/username:
     put:
       consumes:
       - application/json
