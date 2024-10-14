@@ -137,7 +137,12 @@ func (u *UserHandler) Update(ctx *gin.Context) {
 		return
 	}
 	// Update user
-	ctx.Status(http.StatusNotImplemented)
+	resp := UserResponse{
+		UserName: dUser.UserName,
+		Email:    dUser.Email,
+		BirthDay: dUser.Birthday,
+	}
+	ctx.JSON(http.StatusCreated, resp)
 }
 
 // Retrieve
