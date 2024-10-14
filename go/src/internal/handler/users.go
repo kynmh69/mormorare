@@ -114,7 +114,7 @@ func (u *UserHandler) Update(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
-	if err := u.db.Where("user_name = ?", updateUser.UserName).Take(&dUser).Error; err != nil {
+	if err := u.db.Where("user_name = ?", uriUser.Username).Take(&dUser).Error; err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, domain.NewErrorJson(err.Error()))
 		return
 	}
