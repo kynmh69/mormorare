@@ -6,13 +6,13 @@ definitions:
     type: object
   handler.UserResponse:
     properties:
-      birth_day:
+      birthday:
         example: "2006-01-02"
         type: string
       email:
         example: example@test.com
         type: string
-      user_name:
+      username:
         example: test1
         type: string
     type: object
@@ -49,7 +49,7 @@ paths:
       parameters:
       - description: set username
         in: body
-        name: user_name
+        name: username
         required: true
         schema:
           type: string
@@ -83,6 +83,49 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorJson'
       summary: Create a new user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update a user
+      parameters:
+      - description: set username
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: set password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: set email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: set birthday
+        in: body
+        name: birthday
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorJson'
+      summary: Update a user
       tags:
       - users
   /api/v1/users/{user_name}:

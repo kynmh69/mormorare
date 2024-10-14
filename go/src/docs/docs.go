@@ -46,6 +46,71 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Update a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "description": "set username",
+                        "name": "username",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "set password",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "set email",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "set birthday",
+                        "name": "birthday",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorJson"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new user",
                 "consumes": [
@@ -61,7 +126,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "set username",
-                        "name": "user_name",
+                        "name": "username",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -154,7 +219,7 @@ const docTemplate = `{
         "handler.UserResponse": {
             "type": "object",
             "properties": {
-                "birth_day": {
+                "birthday": {
                     "type": "string",
                     "example": "2006-01-02"
                 },
@@ -162,7 +227,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "example@test.com"
                 },
-                "user_name": {
+                "username": {
                     "type": "string",
                     "example": "test1"
                 }

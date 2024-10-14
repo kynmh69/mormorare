@@ -15,9 +15,16 @@ var _ json.Unmarshaler = &originTime.DateTime{}
 
 type User struct {
 	UserName string              `json:"username" binding:"required"`
-	Password string              `json:"password" binding:"required"`
+	Password string              `json:"password" binding:"required,min=8,max=32"`
 	Email    string              `json:"email" binding:"required,email"`
 	BirthDay originTime.DateTime `json:"birthday" binding:"required"`
+}
+
+type UserUpdate struct {
+	UserName string              `json:"username"`
+	Password string              `json:"password"`
+	Email    string              `json:"email"`
+	BirthDay originTime.DateTime `json:"birthday"`
 }
 
 type DeleteUser struct {
@@ -82,6 +89,19 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, resp)
 }
 
+// Update
+// @Summary Update a user
+// @Description Update a user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param username body string true "set username"
+// @Param password body string true "set password"
+// @Param email body string true "set email"
+// @Param birthday body string true "set birthday"
+// @Success 201 {object} UserResponse
+// @Failure 400 {object} domain.ErrorJson
+// @Router /api/v1/users [put]
 func (u *UserHandler) Update(ctx *gin.Context) {
 	// Update user
 	ctx.Status(http.StatusNotImplemented)
