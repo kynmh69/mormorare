@@ -22,7 +22,7 @@ type UserId struct {
 
 type UserUpdate struct {
 	UserName string `json:"username"`
-	Password string `json:"password"`
+	Password string `json:"password" binding:"min=8,max=32"`
 	Email    string `json:"email"`
 }
 
