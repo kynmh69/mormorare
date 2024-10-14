@@ -93,25 +93,21 @@ paths:
       - description: set username
         in: body
         name: username
-        required: true
         schema:
           type: string
       - description: set password
         in: body
         name: password
-        required: true
         schema:
           type: string
       - description: set email
         in: body
         name: email
-        required: true
         schema:
           type: string
       - description: set birthday
         in: body
         name: birthday
-        required: true
         schema:
           type: string
       produces:

@@ -95,10 +95,10 @@ func (u *UserHandler) Create(ctx *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param username body string true "set username"
-// @Param password body string true "set password"
-// @Param email body string true "set email"
-// @Param birthday body string true "set birthday"
+// @Param username body string false "set username"
+// @Param password body string false "set password"
+// @Param email body string false "set email"
+// @Param birthday body string false "set birthday"
 // @Success 201 {object} UserResponse
 // @Failure 400 {object} domain.ErrorJson
 // @Router /api/v1/users [put]

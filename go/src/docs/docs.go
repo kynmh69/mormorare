@@ -63,7 +63,6 @@ const docTemplate = `{
                         "description": "set username",
                         "name": "username",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "string"
                         }
@@ -72,7 +71,6 @@ const docTemplate = `{
                         "description": "set password",
                         "name": "password",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "string"
                         }
@@ -81,7 +79,6 @@ const docTemplate = `{
                         "description": "set email",
                         "name": "email",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "string"
                         }
@@ -90,7 +87,6 @@ const docTemplate = `{
                         "description": "set birthday",
                         "name": "birthday",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "string"
                         }
